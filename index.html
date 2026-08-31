@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>IT Ticket Resolution Recommendation System | Project 9</title>
+
+<meta name="description"
+     content="NLP-powered IT Ticket Resolution Recommendation System — Project 9 research package by Upadrasta Harsha Vardhan.">
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --bg-soft: #0d1220;
+      --card: rgba(18, 24, 38, 0.82);
+      --card-hover: rgba(25, 33, 51, 0.96);
+      --text: #f5f7fb;
+      --muted: #9ca8bc;
+      --line: rgba(255,255,255,0.09);
+      --accent: #7c5cff;
+      --accent-2: #00d4ff;
+      --success: #35e0a1;
+      --warning: #ffc857;
+      --shadow: 0 25px 80px rgba(0,0,0,0.45);
+      --radius: 22px;
+      --max: 1180px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                   BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(124,92,255,.18), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(0,212,255,.13), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 40px));
+      margin: auto;
+    }
+
+    /* NAVIGATION */
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(7,10,18,.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: -.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 720px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+      padding: 100px 0 90px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 1px solid rgba(124,92,255,.14);
+      box-shadow:
+        0 0 0 70px rgba(124,92,255,.025),
+        0 0 0 140px rgba(0,212,255,.018);
+      z-index: -1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.035);
+      color: #c9d1df;
+      font-size: 13px;
+      margin-bottom: 26px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 15px var(--success);
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 1.02;
+      letter-spacing: -4px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #ffffff, #9e8aff 45%, #59e8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 28px auto 36px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 13px 21px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-weight: 700;
+      font-size: 14px;
+      transition: .25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #5b8cff);
+      border: none;
+      box-shadow: 0 12px 35px rgba(124,92,255,.28);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.04);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    /* METRICS */
+
+    .metrics {
+      margin-top: -40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .metric {
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.065),
+        rgba(255,255,255,.025)
+      );
+      box-shadow: var(--shadow);
+    }
+
+    .metric-value {
+      font-size: 42px;
+      font-weight: 850;
+      letter-spacing: -2px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .metric-description {
+      color: #c5ccda;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* SECTIONS */
+
+    section {
+      padding: 110px 0;
+    }
+
+    .section-heading {
+      max-width: 720px;
+      margin-bottom: 48px;
+    }
+
+    .section-heading span {
+      color: var(--accent-2);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin: 12px 0 18px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+    }
+
+    /* PROBLEM */
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .glass-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 32px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .glass-card h3 {
+      margin-bottom: 14px;
+      font-size: 21px;
+    }
+
+    .glass-card p,
+    .glass-card li {
+      color: var(--muted);
+    }
+
+    .glass-card ul {
+      padding-left: 20px;
+      margin-top: 15px;
+    }
+
+    /* FLOW */
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 25px 18px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .flow-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      background: rgba(124,92,255,.16);
+      color: #b9aaff;
+      font-weight: 800;
+    }
+
+    .flow-step h3 {
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .flow-step p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* ARCHITECTURE */
+
+    .architecture {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 42px;
+      background:
+        linear-gradient(135deg, rgba(124,92,255,.08), rgba(0,212,255,.03)),
+        var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .architecture-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .architecture-box {
+      min-width: 160px;
+      padding: 18px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,255,255,.045);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .arrow {
+      color: var(--accent-2);
+      font-size: 24px;
+    }
+
+    /* RESULTS */
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+    }
+
+    .results-table th,
+    .results-table td {
+      padding: 18px 22px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .results-table th {
+      color: #cbd3e2;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .results-table td {
+      color: var(--muted);
+    }
+
+    .score {
+      color: var(--success) !important;
+      font-weight: 850;
+      font-size: 20px;
+    }
+
+    /* USE CASES */
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .use-card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      transition: .25s ease;
+    }
+
+    .use-card:hover {
+      transform: translateY(-6px);
+      background: var(--card-hover);
+      border-color: rgba(124,92,255,.35);
+    }
+
+    .icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .use-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .use-card p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ROADMAP */
+
+    .roadmap {
+      position: relative;
+      max-width: 850px;
+    }
+
+    .roadmap::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .roadmap-item {
+      position: relative;
+      padding: 0 0 35px 55px;
+    }
+
+    .roadmap-dot {
+      position: absolute;
+      left: 8px;
+      top: 6px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 20px rgba(124,92,255,.7);
+    }
+
+    .roadmap-item h3 {
+      margin-bottom: 6px;
+    }
+
+    .roadmap-item p {
+      color: var(--muted);
+    }
+
+    /* CTA */
+
+    .cta {
+      padding: 70px 30px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(124,92,255,.2), transparent 55%),
+        var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .cta p {
+      max-width: 650px;
+      margin: 15px auto 28px;
+      color: var(--muted);
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 45px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .metric-grid,
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(100% - 28px, var(--max));
+      }
+
+      section {
+        padding: 75px 0;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .metric-grid,
+      .cards,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .architecture {
+        padding: 25px 15px;
+      }
+
+      .architecture-row {
+        flex-direction: column;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .results-table {
+        font-size: 13px;
+      }
+
+      .results-table th,
+      .results-table td {
+        padding: 13px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+
+  <nav>
+    <div class="container nav-inner">
+
+
+  <a href="#" class="brand">
+    <span class="brand-icon">🎫</span>
+    <span>IT Resolution AI</span>
+  </a>
+
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#results">Results</a>
+    <a href="#use-cases">Applications</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+
+</div>
+
+
+  </nav>
+
+  <!-- HERO -->
+
+  <header class="hero">
+    <div class="container">
+
+
+  <div class="eyebrow">
+    <span class="dot"></span>
+    Project 9 · NLP Research Package
+  </div>
+
+  <h1>
+    <span class="gradient-text">
+      IT Ticket Resolution
+    </span>
+    Recommendation System
+  </h1>
+
+  <p>
+    An intelligent NLP-powered retrieval and ranking system that
+    transforms historical IT ticket resolutions into actionable
+    recommendations for new incidents.
+  </p>
+
+  <div class="buttons">
+    <a
+      class="btn btn-primary"
+      href="https://github.com/upadrastaharshavardhan/IT-Ticket-Resolution-Recommendation-System-NLP"
+      target="_blank"
+      rel="noopener">
+      ⭐ View on GitHub
+    </a>
+
+    <a class="btn btn-secondary" href="#architecture">
+      Explore Architecture →
+    </a>
+  </div>
+
+</div>
+
+
+  </header>
+
+  <!-- METRICS -->
+
+  <div class="metrics">
+    <div class="container">
+
+
+  <div class="metric-grid">
+
+    <div class="metric">
+      <div class="metric-value">89.0%</div>
+      <div class="metric-label">Recall@1</div>
+      <div class="metric-description">
+        Correct resolution ranked first.
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-value">97.0%</div>
+      <div class="metric-label">Recall@5</div>
+      <div class="metric-description">
+        Correct resolution found within top five.
+      </div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-value">93.0%</div>
+      <div class="metric-label">MRR@5</div>
+      <div class="metric-description">
+        Strong ranking quality across recommendations.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </div>
+
+  <!-- OVERVIEW -->
+
+  <section id="overview">
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>The Problem</span>
+    <h2>Turn historical support knowledge into intelligent recommendations.</h2>
+    <p>
+      IT organizations accumulate enormous amounts of troubleshooting
+      knowledge inside resolved tickets. Finding the right solution
+      manually can be slow and inconsistent.
+    </p>
+  </div>
+
+  <div class="problem-grid">
+
+    <div class="glass-card">
+      <h3>⚠️ Traditional Workflow</h3>
+
+      <p>
+        Support engineers manually search historical tickets,
+        documentation and previous incidents.
+      </p>
+
+      <ul>
+        <li>Large ticket volumes</li>
+        <li>Inconsistent terminology</li>
+        <li>Slow knowledge discovery</li>
+        <li>Repeated troubleshooting effort</li>
+        <li>Loss of organizational knowledge</li>
+      </ul>
+    </div>
+
+    <div class="glass-card">
+      <h3>🚀 Intelligent Workflow</h3>
+
+      <p>
+        The recommendation engine retrieves and ranks historically
+        relevant resolutions for each new ticket.
+      </p>
+
+      <ul>
+        <li>Automatic ticket understanding</li>
+        <li>Historical resolution retrieval</li>
+        <li>Ranked recommendations</li>
+        <li>Top-K evaluation</li>
+        <li>Human-in-the-loop decision support</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- WORKFLOW -->
+
+  <section>
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>Workflow</span>
+    <h2>From ticket to recommended resolution.</h2>
+  </div>
+
+  <div class="flow">
+
+    <div class="flow-step">
+      <div class="flow-number">01</div>
+      <h3>New Ticket</h3>
+      <p>Incoming incident description.</p>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">02</div>
+      <h3>NLP Processing</h3>
+      <p>Normalize and represent ticket text.</p>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">03</div>
+      <h3>Retrieval</h3>
+      <p>Find relevant historical incidents.</p>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">04</div>
+      <h3>Ranking</h3>
+      <p>Order candidate resolutions.</p>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-number">05</div>
+      <h3>Recommendation</h3>
+      <p>Return top-K solutions.</p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- ARCHITECTURE -->
+
+  <section id="architecture">
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>System Architecture</span>
+    <h2>Retrieval → Ranking → Recommendation</h2>
+    <p>
+      A modular pipeline designed for reproducible research and
+      future integration with enterprise ITSM systems.
+    </p>
+  </div>
+
+  <div class="architecture">
+
+    <div class="architecture-row">
+
+      <div class="architecture-box">
+        🎫<br>
+        Historical Tickets
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        🧹<br>
+        Preprocessing
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        🧠<br>
+        NLP Representation
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        🔎<br>
+        Candidate Retrieval
+      </div>
+
+    </div>
+
+    <br>
+
+    <div class="architecture-row">
+
+      <div class="architecture-box">
+        📊<br>
+        Similarity Ranking
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        🏆<br>
+        Top-K Results
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        👨‍💻<br>
+        Engineer Validation
+      </div>
+
+      <div class="arrow">→</div>
+
+      <div class="architecture-box">
+        ✅<br>
+        Resolution
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- RESULTS -->
+
+  <section id="results">
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>Experimental Results</span>
+    <h2>Strong retrieval and ranking performance.</h2>
+    <p>
+      The evaluation focuses on whether the correct historical
+      resolution is surfaced among the highest-ranked recommendations.
+    </p>
+  </div>
+
+  <table class="results-table">
+
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Score</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr>
+        <td>Recall@1</td>
+        <td class="score">0.890</td>
+        <td>
+          Correct resolution appears as the first recommendation
+          in 89% of evaluated cases.
+        </td>
+      </tr>
+
+      <tr>
+        <td>Recall@5</td>
+        <td class="score">0.970</td>
+        <td>
+          Correct resolution appears within the top five
+          recommendations in 97% of cases.
+        </td>
+      </tr>
+
+      <tr>
+        <td>MRR@5</td>
+        <td class="score">0.930</td>
+        <td>
+          Indicates strong ranking quality across the top five results.
+        </td>
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+
+  </section>
+
+  <!-- USE CASES -->
+
+  <section id="use-cases">
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>Applications</span>
+    <h2>Where this system can create value.</h2>
+  </div>
+
+  <div class="cards">
+
+    <div class="use-card">
+      <div class="icon">🏢</div>
+      <h3>Enterprise IT Help Desk</h3>
+      <p>
+        Recommend proven solutions for employee IT incidents
+        using historical support knowledge.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🛠️</div>
+      <h3>Support Engineers</h3>
+      <p>
+        Reduce the time spent manually searching previous
+        incidents and troubleshooting documentation.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">☁️</div>
+      <h3>Cloud Operations</h3>
+      <p>
+        Surface historically successful remediation strategies
+        for recurring infrastructure incidents.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">⚙️</div>
+      <h3>DevOps & SRE</h3>
+      <p>
+        Reuse incident knowledge during operational failures
+        and recurring production issues.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🤖</div>
+      <h3>AI ITSM Platforms</h3>
+      <p>
+        Use retrieval and ranking as a foundation for
+        intelligent IT service-management assistants.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🧠</div>
+      <h3>Knowledge Reuse</h3>
+      <p>
+        Convert previously solved incidents into reusable
+        organizational troubleshooting intelligence.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- METHODOLOGY -->
+
+  <section>
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>Research Methodology</span>
+    <h2>A reproducible experimental pipeline.</h2>
+  </div>
+
+  <div class="roadmap">
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"></div>
+      <h3>01 · Dataset Generation</h3>
+      <p>
+        Generate a controlled ticket-resolution dataset using a
+        fixed random seed for reproducible experiments.
+      </p>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"></div>
+      <h3>02 · Text Processing</h3>
+      <p>
+        Normalize and prepare ticket text for downstream
+        NLP representation.
+      </p>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"></div>
+      <h3>03 · Representation</h3>
+      <p>
+        Transform ticket descriptions into representations
+        suitable for retrieval and similarity comparison.
+      </p>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"></div>
+      <h3>04 · Retrieval & Ranking</h3>
+      <p>
+        Retrieve historical candidates and rank their associated
+        resolutions according to relevance.
+      </p>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-dot"></div>
+      <h3>05 · Evaluation</h3>
+      <p>
+        Measure recommendation quality using Recall@1,
+        Recall@5 and MRR@5.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- FUTURE -->
+
+  <section id="roadmap">
+
+
+<div class="container">
+
+  <div class="section-heading">
+    <span>Future Roadmap</span>
+    <h2>From recommendation engine to intelligent IT operations.</h2>
+  </div>
+
+  <div class="cards">
+
+    <div class="use-card">
+      <div class="icon">🧬</div>
+      <h3>Semantic Embeddings</h3>
+      <p>
+        Improve semantic retrieval using modern document and
+        sentence embedding models.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🔍</div>
+      <h3>Hybrid Search</h3>
+      <p>
+        Combine keyword, semantic and metadata-based retrieval.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🗄️</div>
+      <h3>Vector Database</h3>
+      <p>
+        Scale historical ticket retrieval using vector search infrastructure.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">💬</div>
+      <h3>RAG Assistant</h3>
+      <p>
+        Generate explanations and evidence for recommended resolutions.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🔄</div>
+      <h3>Feedback Learning</h3>
+      <p>
+        Learn from engineer feedback to continuously improve ranking.
+      </p>
+    </div>
+
+    <div class="use-card">
+      <div class="icon">🤖</div>
+      <h3>Agentic IT Operations</h3>
+      <p>
+        Evolve from recommendation toward controlled,
+        human-approved operational assistance.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- CTA -->
+
+  <section>
+
+
+<div class="container">
+
+  <div class="cta">
+
+    <div class="eyebrow">
+      🎫 Project 9 · Research Package
+    </div>
+
+    <h2>
+      Turn historical tickets into operational intelligence.
+    </h2>
+
+    <p>
+      Explore the complete research package, source code,
+      documentation, experiments and methodology.
+    </p>
+
+    <div class="buttons">
+
+      <a
+        class="btn btn-primary"
+        href="https://github.com/upadrastaharshavardhan/IT-Ticket-Resolution-Recommendation-System-NLP"
+        target="_blank"
+        rel="noopener">
+        ⭐ Explore Repository
+      </a>
+
+      <a class="btn btn-secondary" href="#overview">
+        ↑ Back to Overview
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+
+<div class="container">
+
+  <p>
+    🎫 <strong>IT Ticket Resolution Recommendation System</strong>
+  </p>
+
+  <p>
+    Project 9 · NLP & Intelligent IT Operations Research Series
+  </p>
+
+  <p>
+    Built by Upadrasta Harsha Vardhan · 2026
+  </p>
+
+</div>
+
+
+  </footer>
+
+</body>
+</html>
