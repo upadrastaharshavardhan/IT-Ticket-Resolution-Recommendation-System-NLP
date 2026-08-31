@@ -1,0 +1,4 @@
+Metric,Value
+Recall_at_1,0.890
+Recall_at_5,0.970
+MRR_at_5,0.930

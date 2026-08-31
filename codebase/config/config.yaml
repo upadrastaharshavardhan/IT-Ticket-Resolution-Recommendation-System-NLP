@@ -1,0 +1,33 @@
+project:
+  name: "ai-ticket-resolution"
+  version: "1.0.0"
+
+paths:
+  data_dir: "data"
+  artifacts_dir: "artifacts"
+  raw_data: "data/tickets.csv"
+  embeddings: "artifacts/embeddings.npy"
+  faiss_index: "artifacts/faiss.index"
+  metadata: "artifacts/metadata.csv"
+
+data:
+  n_samples: 3000
+  random_seed: 42
+
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 64
+  device: "cuda"
+  normalize: true
+
+similarity:
+  top_k: 5
+  metric: "cosine"
+
+preprocessing:
+  max_text_length: 1200
+
+gradio:
+  title: "IT Ticket Resolution Recommender"
+  description: "Get recommended solutions from similar historical tickets."
+  share: false
